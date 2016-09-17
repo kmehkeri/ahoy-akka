@@ -2,6 +2,8 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+import spray.json.DefaultJsonProtocol._
 
 object AhoyAkka {
   def main(args: Array[String]) {
@@ -15,7 +17,7 @@ object AhoyAkka {
     val route =
       get {
         pathSingleSlash {
-          complete { "Ahoy Akka!" }
+          complete { Service.status }
         } ~
         path("task" / IntNumber) { taskId =>
           complete { s"Ahoy! Task ${taskId} reporting." }
