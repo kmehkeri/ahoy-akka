@@ -12,13 +12,20 @@ object AhoyAkka {
     implicit val actorMaterializer = ActorMaterializer()
     implicit val executionContext = actorSystem.dispatcher
 
-    val route = pathSingleSlash {
+    val route =
       get {
-        complete {
-          "Ahoy Akka!"
+        pathSingleSlash {
+          complete { "Ahoy Akka!" }
+        } ~
+        path("task" / IntNumber) { taskId =>
+          complete { s"Ahoy! Task ${taskId} reporting." }
+        }
+      } ~
+      post {
+        path("submit") {
+          complete { "Ahoy! Submitting task..." }
         }
       }
-    }
 
     val bindingFuture = Http().bindAndHandle(route, host, port)
 
