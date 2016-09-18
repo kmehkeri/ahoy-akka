@@ -32,11 +32,10 @@ object AhoyAkka {
       } ~
       post {
         path("submit") {
-          uploadedFile("file") {
-            case (metadata, file) =>
-              file.delete()
+          fileUpload("file") {
+            case (metadata, byteStream) =>
               complete {
-                Task(1, "Processing")
+                StatusCodes.Accepted -> Task(1, "Processing")
               }
           }
         }
