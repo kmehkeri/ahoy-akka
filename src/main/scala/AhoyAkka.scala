@@ -19,14 +19,16 @@ object AhoyAkka {
     val route =
       get {
         pathSingleSlash {
-          complete { Service.status }
+          val statusF = Service.status
+          onSuccess(statusF) {
+            case status => complete(status)
+          }
         } ~
         path("task" / IntNumber) { id =>
-          complete {
-            Service.getTask(id) match {
-              case Left(msg) => Map("error" -> msg)
-              case Right(task) => task
-            }
+          val taskF = Service.getTask(id)
+          onSuccess(taskF) {
+            case Left(msg) => complete(Map("error" -> msg))
+            case Right(task) => complete(task)
           }
         }
       } ~
