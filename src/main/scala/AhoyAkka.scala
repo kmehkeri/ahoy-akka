@@ -1,6 +1,7 @@
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.Http
+import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import spray.json.DefaultJsonProtocol._
@@ -13,19 +14,31 @@ object AhoyAkka {
     implicit val actorSystem = ActorSystem("ahoy-system")
     implicit val actorMaterializer = ActorMaterializer()
     implicit val executionContext = actorSystem.dispatcher
+    implicit val taskJsonFormat = jsonFormat2(Task)
 
     val route =
       get {
         pathSingleSlash {
           complete { Service.status }
         } ~
-        path("task" / IntNumber) { taskId =>
-          complete { s"Ahoy! Task ${taskId} reporting." }
+        path("task" / IntNumber) { id =>
+          complete {
+            Service.getTask(id) match {
+              case Left(msg) => Map("error" -> msg)
+              case Right(task) => task
+            }
+          }
         }
       } ~
       post {
         path("submit") {
-          complete { "Ahoy! Submitting task..." }
+          uploadedFile("file") {
+            case (metadata, file) =>
+              file.delete()
+              complete {
+                Task(1, "Processing")
+              }
+          }
         }
       }
 

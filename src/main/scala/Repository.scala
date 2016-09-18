@@ -8,7 +8,7 @@ object Repository {
   }
 
   def findTask(id: Int): Option[Task] = {
-    Some(Task(id, "OK"))
+    Some(Task(id, "Completed"))
   }
 
   def allTasks: List[Task] = {
