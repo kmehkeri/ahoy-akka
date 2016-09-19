@@ -2,7 +2,8 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object Service {
-  def submitTask(task: Task) = {
+  def submitTask(n: Int): Future[Either[String, Task]] = Future {
+    Right(Repository.createTask(Task(0, n, "Processing")))
   }
 
   def getTask(id: Int): Future[Either[String, Task]] = Future {

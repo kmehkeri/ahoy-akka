@@ -5,6 +5,7 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import spray.json.DefaultJsonProtocol._
+import scala.concurrent.Future
 
 object AhoyAkka extends App {
   val host = "localhost"
@@ -13,7 +14,7 @@ object AhoyAkka extends App {
   implicit val actorSystem = ActorSystem("ahoy-system")
   implicit val actorMaterializer = ActorMaterializer()
   implicit val executionContext = actorSystem.dispatcher
-  implicit val taskJsonFormat = jsonFormat2(Task)
+  implicit val taskJsonFormat = jsonFormat3(Task.apply)
 
   val route =
     get {
@@ -35,8 +36,11 @@ object AhoyAkka extends App {
       path("submit") {
         fileUpload("file") {
           case (metadata, byteStream) =>
-            complete {
-              StatusCodes.Accepted -> Task(1, "Processing")
+            val taskF = byteStream.runFold(0)((acc, str) => acc + str.length).flatMap(n => Service.submitTask(n))
+            onSuccess(taskF) { task =>
+              complete {
+                StatusCodes.Accepted -> task
+              }
             }
         }
       }
