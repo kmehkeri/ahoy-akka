@@ -7,10 +7,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import spray.json.DefaultJsonProtocol._
 import scala.concurrent.Future
 
-object AhoyAkka extends App {
-  val host = "localhost"
-  val port = 8888
-
+object AhoyAkka extends App with Config {
   implicit val actorSystem = ActorSystem("ahoy-system")
   implicit val actorMaterializer = ActorMaterializer()
   implicit val executionContext = actorSystem.dispatcher
@@ -46,10 +43,10 @@ object AhoyAkka extends App {
       }
     }
 
-  val bindingFuture = Http().bindAndHandle(route, host, port)
+  val bindingFuture = Http().bindAndHandle(route, httpHost, httpPort)
 
   bindingFuture.map { b =>
-    println(s"Server started at ${host}:${port}\nPress ENTER to stop...")
+    println(s"Server started at ${httpHost}:${httpPort}\nPress ENTER to stop...")
     readLine()
     b
   }.flatMap(_.unbind()).onComplete { _ =>
