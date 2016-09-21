@@ -1,9 +1,12 @@
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import akka.actor.ActorRef
 
-object Service {
+class Service(worker: ActorRef) {
   def submitTask(n: Int): Future[Either[String, Task]] = Future {
-    Right(Repository.createTask(Task(0, n, "Processing")))
+    val task = Task(0, n, "Processing")
+    worker ! task
+    Right(Repository.createTask(task))
   }
 
   def getTask(id: Int): Future[Either[String, Task]] = Future {
