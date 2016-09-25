@@ -24,7 +24,7 @@ object AhoyAkka extends App with Config {
       path("task" / IntNumber) { id =>
         val taskF = Service.getTask(id)
         onSuccess(taskF) {
-          case Left(msg) => complete(Map("error" -> msg))
+          case Left(msg) => complete(StatusCodes.NotFound -> Map("error" -> msg))
           case Right(task) => complete(task)
         }
       }
