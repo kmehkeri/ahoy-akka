@@ -4,9 +4,9 @@ import akka.actor.ActorRef
 
 class Service(worker: ActorRef) {
   def submitTask(n: Int): Future[Either[String, Task]] = Future {
-    val task = Task(0, n, "Processing")
+    val task = Repository.createTask(n)
     worker ! task
-    Right(Repository.createTask(n))
+    Right(task)
   }
 
   def getTask(id: Int): Future[Either[String, Task]] = Future {

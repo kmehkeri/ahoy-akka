@@ -1,10 +1,15 @@
 import akka.actor.Actor
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class Worker extends Actor {
   def receive = {
     case task: Task =>
       println(s"Received some stuff to do for task ${task.id} n=${task.n}")
-      Thread.sleep(5000)
-      println("Yeah, okay")
+      Future {
+        Thread.sleep(5000)
+      }.onComplete { t =>
+        println(s"Yeah, okay, task ${task.id} done.")
+      }
   }
 }
