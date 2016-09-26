@@ -1,18 +1,26 @@
+import collection.mutable.ArrayBuffer
+
 case class Task(id: Int, n: Int, status: String)
 
 object Repository {
-  def createTask(task: Task): Task = {
-    Task(666, task.n, task.status)
+  private val tasks: ArrayBuffer[Task] = ArrayBuffer()
+
+  def createTask(n: Int): Task = {
+    val task = Task(tasks.size + 1, n, "Processing")
+    tasks.append(task)
+    task
   }
 
-  def updateTask(task: Task): Unit = {
+  def updateTask(id: Int, status: String): Unit = {
+    val i = tasks.indexWhere(_.id == id)
+    tasks(i) = Task(id, tasks(i).n, status)
   }
 
   def findTask(id: Int): Option[Task] = {
-    Some(Task(id, 100, "Completed"))
+    tasks.find(_.id == id)
   }
 
-  def allTasks: List[Task] = {
-    List(Task(1, 123, "Running"), Task(2, 234, "Broken"), Task(3, 999, "Completed"), Task(4, 6285, "Completed"))
+  def allTasks: ArrayBuffer[Task] = {
+    tasks
   }
 }

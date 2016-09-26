@@ -6,7 +6,7 @@ class Service(worker: ActorRef) {
   def submitTask(n: Int): Future[Either[String, Task]] = Future {
     val task = Task(0, n, "Processing")
     worker ! task
-    Right(Repository.createTask(task))
+    Right(Repository.createTask(n))
   }
 
   def getTask(id: Int): Future[Either[String, Task]] = Future {
