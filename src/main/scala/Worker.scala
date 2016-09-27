@@ -9,6 +9,7 @@ class Worker extends Actor {
       Future {
         Thread.sleep(5000)
       }.onComplete { t =>
+        Repository.updateTask(task.id, "Completed")
         println(s"Yeah, okay, task ${task.id} done.")
       }
   }
