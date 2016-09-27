@@ -1,6 +1,7 @@
-import akka.actor.Actor
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+
+import akka.actor.Actor
 
 class Worker extends Actor {
   def receive = {

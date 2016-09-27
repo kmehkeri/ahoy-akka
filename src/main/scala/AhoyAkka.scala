@@ -1,3 +1,5 @@
+import scala.concurrent.Future
+
 import akka.actor.ActorSystem
 import akka.actor.Props
 import akka.stream.ActorMaterializer
@@ -6,7 +8,6 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import spray.json.DefaultJsonProtocol._
-import scala.concurrent.Future
 
 object AhoyAkka extends App with Config {
   implicit val actorSystem = ActorSystem("ahoy-system")

@@ -1,5 +1,6 @@
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+
 import akka.actor.ActorRef
 
 class Service(worker: ActorRef) {

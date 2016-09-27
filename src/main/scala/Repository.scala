@@ -1,4 +1,4 @@
-import collection.mutable.ArrayBuffer
+import scala.collection.mutable.ArrayBuffer
 
 case class Task(id: Int, n: Int, status: String)
 
