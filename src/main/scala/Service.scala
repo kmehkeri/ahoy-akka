@@ -16,7 +16,7 @@ class Service(worker: ActorRef) {
     }
   }
 
-  def status: Future[Map[String, Int]] = Future {
-    Repository.allTasks.groupBy(_.status).mapValues(_.length)
+  def status: Future[List[Task]] = Future {
+    Repository.allTasks
   }
 }

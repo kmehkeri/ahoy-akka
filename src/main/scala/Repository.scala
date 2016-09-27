@@ -20,7 +20,7 @@ object Repository {
     tasks.find(_.id == id)
   }
 
-  def allTasks: ArrayBuffer[Task] = {
-    tasks
+  def allTasks: List[Task] = {
+    tasks.toList
   }
 }
