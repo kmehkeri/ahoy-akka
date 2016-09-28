@@ -50,13 +50,18 @@ object AhoyAkka extends App with Config {
 
   val bindingFuture = Http().bindAndHandle(route, httpHost, httpPort)
 
-  bindingFuture.map { b =>
-    println(s"Server started at ${httpHost}:${httpPort}\nPress ENTER to stop...")
-    readLine()
-    b
-  }.flatMap(_.unbind()).onComplete { _ =>
-    println("Terminating...")
-    actorSystem.terminate()
+  bindingFuture.onSuccess { case b =>
+    println(s"Server started at ${httpHost}:${httpPort}")
+
+    // If readLine returns end-of-stream it means we are (most probably) in non-interactive mode,
+    // so don't do anything and wait to be killed
+    if (readLine() != null) {
+      // Otherwise terminate, we're inside sbt maybe and user pressed ENTER
+      println("Terminating")
+      b.unbind().onComplete { _ =>
+        actorSystem.terminate()
+      }
+    }
   }
 }
 
