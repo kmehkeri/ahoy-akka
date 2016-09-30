@@ -1,4 +1,5 @@
 import scala.concurrent.Future
+import scala.util.{Success,Failure}
 
 import akka.actor.ActorSystem
 import akka.actor.Props
@@ -52,17 +53,23 @@ object AhoyAkka extends App with Config {
 
   val bindingFuture = Http().bindAndHandle(route, httpHost, httpPort)
 
-  bindingFuture.onSuccess { case b =>
-    log.info(s"Server started at ${httpHost}:${httpPort}")
+  bindingFuture.onComplete {
+    case Success(b) => {
+      log.info(s"Server started at ${httpHost}:${httpPort}")
 
-    // If readLine returns end-of-stream it means we are (most probably) in non-interactive mode,
-    // so don't do anything and wait to be killed
-    if (readLine() != null) {
-      // Otherwise terminate, we're inside sbt maybe and user pressed ENTER
-      log.info("Terminating")
-      b.unbind().onComplete { _ =>
-        actorSystem.terminate()
+      // If readLine returns end-of-stream it means we are (most probably) in non-interactive mode,
+      // so don't do anything and wait to be killed
+      if (readLine() != null) {
+        // Otherwise terminate, we're inside sbt maybe and user pressed ENTER
+        log.info("Terminating")
+        b.unbind().onComplete { _ =>
+          actorSystem.terminate()
+        }
       }
+    }
+    case Failure(e) => {
+      println("Aborting")
+      actorSystem.terminate()
     }
   }
 }
